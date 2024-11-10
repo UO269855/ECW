@@ -1,3 +1,37 @@
-body{
-    font: 1em sans-serif;
+header, main, footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 0 2.5rem;
+}
+
+body {
+    background-color: lightgray;
+    width: 80vw;
+    font: 16px sans-serif;
+    margin: auto;
+}
+
+header {
+    min-height: 15vh;
+}
+
+main {
+    min-height: 70vh;
+}
+
+footer{
+    min-height: 15vh;
+    align-items: center;
+    justify-content: center;
+}
+
+img {
+    width: 30%;
+    height: auto;
+}
+
+section {
+    display: flex;
 }
