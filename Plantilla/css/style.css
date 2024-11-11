@@ -1,6 +1,9 @@
 body {
+    display: flex;
+    flex-direction: column;
     background-color: lightgray;
     width: 65vw;
+    height: 100vw;
     font: 16px "Monaco", monospace;
     font-weight: 500;
     text-align: start;
@@ -10,40 +13,42 @@ body {
 header, main, footer {
     display: flex;
     flex-direction: column;
-    padding: 0 2.5rem;
+    padding: 0 2rem;
 }
 
 header {
-    align-items: center;
-    min-height: 15vh;
+    justify-content: center;
     color: white;
     background-color: #444F5A;
+    padding-bottom: 1rem;
+    align-items: center;
 }
 
 main {
-    min-height: 70vh;
     background-color: white;
 }
 
 footer{
-    min-height: 15vh;
+    padding: 1.5rem 0;
     align-items: center;
     justify-content: center;
     background-color: white;
 }
 
 img {
-    max-width: 40%;
+    width: 100%;
     height: auto;
 }
 
-section {
+nav {
     display: flex;
+    flex-wrap: wrap;
 }
 
 nav a{
     color: black;
     background-color: #add8e6;
+    margin: 0.4rem;
     padding: 0.6rem;
     border-radius: 1rem;
     font-weight: bold;
@@ -52,18 +57,19 @@ nav a{
 nav a:hover {
     color: black;
     background-color: lightsalmon;
+    margin: 0.4rem;
     padding: 0.6rem;
     border-radius: 1rem;
 }
 
 h2 {
     background-color: lightsalmon;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
 }
 
 h3 {
     background-color: #add8e6;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
 }
