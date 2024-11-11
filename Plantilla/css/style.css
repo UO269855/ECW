@@ -51,7 +51,6 @@ nav a{
     background-color: #add8e6;
     margin: 0.4rem;
     padding: 0.6rem;
-    border-radius: 1rem;
     font-weight: bold;
     text-align: center;
 }
@@ -61,7 +60,6 @@ nav a:hover {
     background-color: lightsalmon;
     margin: 0.4rem;
     padding: 0.6rem;
-    border-radius: 1rem;
 }
 
 h2 {
