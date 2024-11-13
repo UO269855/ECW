@@ -2,8 +2,8 @@ body {
     display: flex;
     flex-direction: column;
     background-color: lightgray;
-    width: 90vw;
-    font: 16px "Monaco", monospace;
+    width: 75vw;
+    font: 18px "Monaco", monospace;
     font-weight: 500;
     text-align: start;
     margin: auto;
@@ -34,9 +34,15 @@ footer{
     background-color: white;
 }
 
+section {
+    display: flex;
+    flex-direction: column;
+}
+
 img {
-    width: 100%;
+    width: 80%;
     height: auto;
+    align-self: center;
 }
 
 nav {
