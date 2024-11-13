@@ -2,8 +2,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: lightgray;
-    width: 65vw;
-    height: 100vw;
+    width: 90vw;
     font: 16px "Monaco", monospace;
     font-weight: 500;
     text-align: start;
@@ -13,7 +12,7 @@ body {
 header, main, footer {
     display: flex;
     flex-direction: column;
-    padding: 0 2rem;
+    padding: 0 1rem;
 }
 
 header {
