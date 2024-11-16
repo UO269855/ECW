@@ -76,21 +76,27 @@ nav a{
     text-align: center;
 }
 
-nav a:hover {
+nav a:hover, nav a:focus {
     color: black;
     background-color: lightsalmon;
-    margin: 0.4rem;
-    padding: 0.6rem;
 }
 
 h2 {
     background-color: lightsalmon;
     font-size: 1.6rem;
-    font-weight: bold;
 }
 
 h3 {
-    background-color: #add8e6;
-    font-size: 1.3rem;
+    background-color: lightcoral;
+    font-size: 1.4rem;
+}
+
+h4 {
+    background-color: lightgreen;
+    font-size: 1.2rem;
+}
+
+h2, h3, h4 {
+    padding: 0.4rem;
     font-weight: bold;
 }
