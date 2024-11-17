@@ -5,21 +5,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchTerm = urlParams.get("buscarPalabra");
 
   if (!searchTerm) {
-    // If no search term is provided, show an error message
+    // Si no hay ningún parámetro, que se indique al usuario
     document.getElementById("resultados").innerHTML =
-      "<p>No search term provided.</p>";
+      "<p>No se ha introducido ninguna palabra para la búsqueda</p>";
   } else {
+    //Inidcamos los ficheros en los que buscar la palabra
     const files = [
       "aboutMe.html",
       "index.html",
       "personalProjects.html",
       "help.html",
     ];
+    //Obtenemos el contenedor donde mostrar los resultados y lo limpiamos.
     const resultsContainer = document.getElementById("resultados");
     resultsContainer.innerHTML = ""; // Clear previous results
 
+    // Indicamos al usuario la palabra que ha buscado
     document.getElementById("palabraBuscada").innerHTML =
-      "<h3>Palabra buscada:</h3><p>" + searchTerm + "</p>";
+      "<h3>Palabra buscada:" + searchTerm + "</h3>";
 
     // Function to check if the search term exists in the text (case-insensitive)
     function isSubstringMatch(text, searchTerm) {
