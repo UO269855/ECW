@@ -1,6 +1,6 @@
-// Wait for the DOM to be fully loaded
+//Esperamos a que se cargue el árbol DON para hacer la búsqueda.
 document.addEventListener("DOMContentLoaded", function () {
-  // Extract the search term from the URL query parameter
+  // Obtenemos la palabra que queremos buscar, que se envía por parámetro
   const urlParams = new URLSearchParams(window.location.search);
   const searchTerm = urlParams.get("buscarPalabra");
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     resultsContainer.innerHTML = ""; // Clear previous results
 
     document.getElementById("palabraBuscada").innerHTML =
-      "<p>Palabra buscada:" + searchTerm + "</p>";
+      "<h3>Palabra buscada:</h3><p>" + searchTerm + "</p>";
 
     // Function to check if the search term exists in the text (case-insensitive)
     function isSubstringMatch(text, searchTerm) {
