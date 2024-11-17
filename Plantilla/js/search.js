@@ -62,6 +62,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Creamos un parseador que tenga el árbol DOM del texto del fichero y extraemos su main para buscar la palabra
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
+
+        // Eliminamos el nav para la búsqueda
+        const navElement = doc.querySelector("nav");
+        if (navElement) {
+          navElement.remove();
+        }
+
         const mainText =
           doc.querySelector("main").textContent ||
           doc.querySelector("main").innerText;
