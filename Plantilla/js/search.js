@@ -9,7 +9,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("resultados").innerHTML =
       "<p>No search term provided.</p>";
   } else {
-    const files = ["file1.html", "file2.html", "file3.html"];
+    const files = [
+      "aboutMe.html",
+      "index.html",
+      "personalProjects.html",
+      "help.html",
+    ];
     const resultsContainer = document.getElementById("resultados");
     resultsContainer.innerHTML = ""; // Clear previous results
 
