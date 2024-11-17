@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
     //Obtenemos el contenedor donde mostrar los resultados y lo limpiamos.
     const resultsContainer = document.getElementById("resultados");
-    resultsContainer.innerHTML = ""; // Clear previous results
+    resultsContainer.innerHTML = "";
 
     // Indicamos al usuario la palabra que ha buscado
     document.getElementById("palabraBuscada").innerHTML =
@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
     /**
      * Función que busca una palabra en el contenido de la página, sin tener en cuenta mayúsculas
      * @param {*} text Texto en el que buscar la palabra
-     * @param {*} searchTerm palabra que estamos buscando
-     * @returns
+     * @param {*} searchTerm Palabra que estamos buscando
+     * @returns Si el texto coincide o no
      */
     function isSubstringMatch(text, searchTerm) {
       const lowerCaseText = text.toLowerCase();
@@ -36,45 +36,78 @@ document.addEventListener("DOMContentLoaded", function () {
       return lowerCaseText.includes(lowerCaseSearchTerm);
     }
 
+    /**
+     * Función que obtiene la oración en la que se encuentra la palabra buscada.
+     * @param {*} text Texto en el que buscar la palabra
+     * @param {*} searchTerm Palabra que estamos buscando
+     * @returns La oración dónde se encuentra la palabra
+     */
     function extractSentence(text, searchTerm) {
-      // Regular expression to find the sentence containing the search term
       const regex = new RegExp(`([^.]*?${searchTerm}[^.]*\.)`, "gi");
       const match = text.match(regex);
-      return match ? match[0] : "Sentence not found";
+      return match ? match[0] : "No se ha encontrado la palabra en el texto";
     }
 
-    // Function to search for the term in the HTML content of a file
+    /**
+     * Función que busca una determinada palabra en el fichero especificado
+     * @param {*} file Nombre del fichero
+     * @param {*} searchTerm Palabra que estamos buscando
+     */
     async function searchFile(file, searchTerm) {
       try {
-        const response = await fetch(file); // Fetch the file's content
+        //Cargamos el fichero y obtenemos el texto que contiene.
+        const response = await fetch(file);
         const text = await response.text();
 
-        // Create a DOM parser to parse the HTML content
+        // Creamos un parseador que tenga el árbol DOM del texto del fichero y extraemos su body para buscar la palabra
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
         const bodyText = doc.body.textContent || doc.body.innerText;
-        const firstH2 = doc.querySelector("h2").innerText;
+        // Obtenemos el título del contenido para mostrarlo en la búsqueda
+        const bodyTitle = doc.querySelector("h2").innerText;
 
-        // Check if the search term appears in the body text
+        // Comprobamos si la palabra se encuentra dentro del texto y mostramos el resultado
         if (isSubstringMatch(bodyText, searchTerm)) {
           const sentence = extractSentence(bodyText, searchTerm);
-          displayResults(file, firstH2, sentence); // Display result with sentence
+          const highlightedSentence = highlightSearchTerm(sentence, searchTerm);
+          displayResults(file, bodyTitle, sentence);
+        }
+        // Si no hay resultados, mostramos un mensaje al usuario
+        if (resultsContainer.innerHTML.length === 0) {
+          resultsContainer.innerHTML =
+            "<p>No hay resultados para su búsqueda</p>";
         }
       } catch (error) {
         console.error("Error fetching or processing file:", file, error);
       }
     }
 
-    // Function to display the results for a file
-    function displayResults(file, firstH2, sentence) {
-      const fileLink = "<a href=" + file + ">" + firstH2 + "</a>";
+    /**
+     * Función que resalta la palabra buscada en negrita
+     * @param {*} sentence Frase donde se encontró la palabra
+     * @param {*} searchTerm Palabra buscada
+     * @returns La frase con la palabra resaltada en negrita
+     */
+    function highlightSearchTerm(sentence, searchTerm) {
+      const regex = new RegExp(`(${searchTerm})`, "gi"); // Regex to match the search term
+      return sentence.replace(regex, "<strong>$1</strong>"); // Wrap the match in <strong> tags
+    }
+
+    /**
+     * Función que muestra el resultado en la pantalla de búsqueda
+     * @param {*} file Referencia al fichero en el que hemos encontrado resultados
+     * @param {*} bodyTitle Título del body del fichero que estamos consultando
+     * @param {*} sentence Frase donde se ha encontrado la palabra buscada
+     */
+    function displayResults(file, bodyTitle, sentence) {
+      const fileLink = "<a href=" + file + ">" + bodyTitle + "</a>";
       let resultHTML = '<article class="result">' + fileLink + "</article>";
       resultHTML += '<article class="result"><p>' + sentence + "</p></article>";
 
       resultsContainer.innerHTML += resultHTML;
     }
 
-    // Search all files
-    files.forEach((file) => searchFile(file, searchTerm)); // Loop through the files and call searchFile
+    // Buscamos en todos los ficheros
+    files.forEach((file) => searchFile(file, searchTerm));
   }
 });
