@@ -113,10 +113,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Buscamos en todos los ficheros
-    files.forEach((file) => searchFile(file, searchTerm));
+    /**
+     * Método que busca en todos los ficheros la palabra especificada en la búsqueda
+     */
+    async function searchFiles() {
+      for (const file of files) {
+        await searchFile(file, searchTerm);
+      }
 
-    // Si no hay resultados, mostramos un error
-    checkResults();
+      // Si no hay resultados, mostramos un error
+      checkResults();
+    }
+
+    searchFiles();
   }
 });
