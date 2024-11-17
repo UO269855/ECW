@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
         const bodyText = doc.body.textContent || doc.body.innerText;
-        const firstH2 = doc.querySelector("h2");
+        const firstH2 = doc.querySelector("h2").innerText;
 
         // Check if the search term appears in the body text
         if (isSubstringMatch(bodyText, searchTerm)) {
