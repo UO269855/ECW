@@ -22,9 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Indicamos al usuario la palabra que ha buscado
     document.getElementById("palabraBuscada").innerHTML =
-      "<h3>Palabra buscada:" + searchTerm + "</h3>";
+      "<h3>Palabra buscada: " + searchTerm + "</h3>";
 
-    // Function to check if the search term exists in the text (case-insensitive)
+    /**
+     * Función que busca una palabra en el contenido de la página, sin tener en cuenta mayúsculas
+     * @param {*} text Texto en el que buscar la palabra
+     * @param {*} searchTerm
+     * @returns
+     */
     function isSubstringMatch(text, searchTerm) {
       const lowerCaseText = text.toLowerCase();
       const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -48,11 +53,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
         const bodyText = doc.body.textContent || doc.body.innerText;
+        const firstH2 = doc.querySelector("h2");
 
         // Check if the search term appears in the body text
         if (isSubstringMatch(bodyText, searchTerm)) {
           const sentence = extractSentence(bodyText, searchTerm);
-          displayResults(file, sentence); // Display result with sentence
+          displayResults(file, firstH2, sentence); // Display result with sentence
         }
       } catch (error) {
         console.error("Error fetching or processing file:", file, error);
@@ -60,9 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Function to display the results for a file
-    function displayResults(file, sentence) {
-      const fileName = file.split("/").pop(); // Get the file name
-      const fileLink = "<a href=" + file + ">" + fileName + "</a>";
+    function displayResults(file, firstH2, sentence) {
+      const fileLink = "<a href=" + file + ">" + firstH2 + "</a>";
       let resultHTML = '<article class="result">' + fileLink + "</article>";
       resultHTML += '<article class="result"><p>' + sentence + "</p></article>";
 
