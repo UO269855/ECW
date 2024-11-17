@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Obtenemos la palabra que queremos buscar, que se envía por parámetro
   const urlParams = new URLSearchParams(window.location.search);
-  const searchTerm = urlParams.get("buscarPalabra")?.replace(/\s+/g, "");
+  const searchTerm = urlParams.get("buscarPalabra")?.trim();
 
   if (!searchTerm) {
     // Si no hay ningún parámetro, que se indique al usuario
@@ -62,7 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Creamos un parseador que tenga el árbol DOM del texto del fichero y extraemos su main para buscar la palabra
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
-        const mainText = doc.querySelector("main");
+        const mainText =
+          doc.querySelector("main").textContent ||
+          doc.querySelector("main").innerText;
         // Obtenemos el título del contenido para mostrarlo en la búsqueda
         const mainTitle = doc.querySelector("h2").innerText;
 
