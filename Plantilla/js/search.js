@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Obtenemos la palabra que queremos buscar, que se envía por parámetro
   const urlParams = new URLSearchParams(window.location.search);
-  const searchTerm = urlParams.get("buscarPalabra")?.replace(/\s+/g, "");
+  const searchTerm = urlParams.get("buscarPalabra");
 
   if (!searchTerm) {
     // Si no hay ningún parámetro, que se indique al usuario
