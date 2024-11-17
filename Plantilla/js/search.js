@@ -72,11 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const highlightedSentence = highlightSearchTerm(sentence, searchTerm);
           displayResults(file, bodyTitle, highlightedSentence);
         }
-        // Si no hay resultados, mostramos un mensaje al usuario
-        if (resultsContainer.innerHTML.length === 0) {
-          resultsContainer.innerHTML =
-            "<p>No hay resultados para su búsqueda</p>";
-        }
       } catch (error) {
         console.error("Error fetching or processing file:", file, error);
       }
@@ -89,8 +84,8 @@ document.addEventListener("DOMContentLoaded", function () {
      * @returns La frase con la palabra resaltada en negrita
      */
     function highlightSearchTerm(sentence, searchTerm) {
-      const regex = new RegExp(`(${searchTerm})`, "gi"); // Regex to match the search term
-      return sentence.replace(regex, "<strong>$1</strong>"); // Wrap the match in <strong> tags
+      const regex = new RegExp(`(${searchTerm})`, "gi");
+      return sentence.replace(regex, "<strong>$1</strong>");
     }
 
     /**
@@ -109,5 +104,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Buscamos en todos los ficheros
     files.forEach((file) => searchFile(file, searchTerm));
+
+    // Si no hay resultados, mostramos un mensaje al usuario
+    if (resultsContainer.children.length === 0) {
+      resultsContainer.innerHTML = "<p>No hay resultados para su búsqueda</p>";
+    }
   }
 });
