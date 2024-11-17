@@ -25,6 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return lowerCaseText.includes(lowerCaseSearchTerm);
     }
 
+    function extractSentence(text, searchTerm) {
+      // Regular expression to find the sentence containing the search term
+      const regex = new RegExp(`([^.]*?${searchTerm}[^.]*\.)`, "gi");
+      const match = text.match(regex);
+      return match ? match[0] : "Sentence not found";
+    }
+
     // Function to search for the term in the HTML content of a file
     async function searchFile(file, searchTerm) {
       try {
@@ -38,7 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Check if the search term appears in the body text
         if (isSubstringMatch(bodyText, searchTerm)) {
-          displayResults(file); // Display result if a match is found
+          const sentence = extractSentence(bodyText, searchTerm);
+          displayResults(file, sentence); // Display result with sentence
         }
       } catch (error) {
         console.error("Error fetching or processing file:", file, error);
