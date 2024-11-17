@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isSubstringMatch(bodyText, searchTerm)) {
           const sentence = extractSentence(bodyText, searchTerm);
           const highlightedSentence = highlightSearchTerm(sentence, searchTerm);
-          displayResults(file, bodyTitle, sentence);
+          displayResults(file, bodyTitle, highlightedSentence);
         }
         // Si no hay resultados, mostramos un mensaje al usuario
         if (resultsContainer.innerHTML.length === 0) {
