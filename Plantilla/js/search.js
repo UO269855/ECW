@@ -59,8 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to display the results for a file
     function displayResults(file, sentence) {
       const fileName = file.split("/").pop(); // Get the file name
-      const fileLink =
-        "<a href=" + file + 'target="_blank">' + fileName + "</a>";
+      const fileLink = "<a href=" + file + ">" + fileName + "</a>";
       let resultHTML = '<article class="result">' + fileLink + "</article>";
       resultHTML += '<article class="result"><p>' + sentence + "</p></article>";
 
