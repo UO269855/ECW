@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Obtenemos la palabra que queremos buscar, que se envía por parámetro
   const urlParams = new URLSearchParams(window.location.search);
-  const searchTerm = urlParams.get("buscarPalabra");
+  const searchTerm = urlParams.get("buscarPalabra")?.replace(/\s+/g, "");
 
   if (!searchTerm) {
     // Si no hay ningún parámetro, que se indique al usuario
@@ -59,18 +59,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const response = await fetch(file);
         const text = await response.text();
 
-        // Creamos un parseador que tenga el árbol DOM del texto del fichero y extraemos su body para buscar la palabra
+        // Creamos un parseador que tenga el árbol DOM del texto del fichero y extraemos su main para buscar la palabra
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
-        const bodyText = doc.body.main.textContent || doc.body.main.innerText;
+        const mainText = doc.querySelector("main");
         // Obtenemos el título del contenido para mostrarlo en la búsqueda
-        const bodyTitle = doc.querySelector("h2").innerText;
+        const mainTitle = doc.querySelector("h2").innerText;
 
         // Comprobamos si la palabra se encuentra dentro del texto y mostramos el resultado
-        if (isSubstringMatch(bodyText, searchTerm)) {
-          const sentence = extractSentence(bodyText, searchTerm);
+        if (isSubstringMatch(mainText, searchTerm)) {
+          const sentence = extractSentence(mainText, searchTerm);
           const highlightedSentence = highlightSearchTerm(sentence, searchTerm);
-          displayResults(file, bodyTitle, highlightedSentence);
+          displayResults(file, mainTitle, highlightedSentence);
         }
       } catch (error) {
         console.error("Error fetching or processing file:", file, error);
@@ -91,11 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
     /**
      * Función que muestra el resultado en la pantalla de búsqueda
      * @param {*} file Referencia al fichero en el que hemos encontrado resultados
-     * @param {*} bodyTitle Título del body del fichero que estamos consultando
+     * @param {*} mainTitle Título del main del fichero que estamos consultando
      * @param {*} sentence Frase donde se ha encontrado la palabra buscada
      */
-    function displayResults(file, bodyTitle, sentence) {
-      const fileLink = "<a href=" + file + ">" + bodyTitle + "</a>";
+    function displayResults(file, mainTitle, sentence) {
+      const fileLink = "<a href=" + file + ">" + mainTitle + "</a>";
       let resultHTML = '<article class="result">' + fileLink + "</article>";
       resultHTML += '<article class="result"><p>' + sentence + "</p></article>";
 
