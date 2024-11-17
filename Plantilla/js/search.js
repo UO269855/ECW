@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const resultsContainer = document.getElementById("resultados");
     resultsContainer.innerHTML = ""; // Clear previous results
 
+    document.getElementById("palabraBuscada").textContent =
+      "<p>Palabra buscada:" + searchTerm + "</p>";
+
     // Function to check if the search term exists in the text (case-insensitive)
     function isSubstringMatch(text, searchTerm) {
       const lowerCaseText = text.toLowerCase();
@@ -27,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function extractSentence(text, searchTerm) {
       // Regular expression to find the sentence containing the search term
-      const regex = new RegExp(`([^.]*?${searchTerm}[^.]*\.)`, "gi");
+      const regex = new RegExp("([^.]*?${searchTerm}[^.]*.)", "gi");
       const match = text.match(regex);
       return match ? match[0] : "Sentence not found";
     }
@@ -54,10 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Function to display the results for a file
-    function displayResults(file) {
+    function displayResults(file, sentence) {
       const fileName = file.split("/").pop(); // Get the file name
-      const fileLink = `<a href="${file}" target="_blank">${fileName}</a>`;
-      let resultHTML = `<div class="result"><strong>Found in: ${fileLink}</strong></div>`;
+      const fileLink = '<a href="${file}" target="_blank">${fileName}</a>';
+      let resultHTML = '<div class="result"><strong>${fileLink}</strong>';
+      resultHTML += '<div class="result"><p>"${sentence}"</p></div>';
 
       resultsContainer.innerHTML += resultHTML;
     }
