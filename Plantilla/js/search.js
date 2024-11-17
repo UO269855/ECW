@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const resultsContainer = document.getElementById("resultados");
     resultsContainer.innerHTML = ""; // Clear previous results
 
-    document.getElementById("palabraBuscada").textContent =
+    document.getElementById("palabraBuscada").innerHTML =
       "<p>Palabra buscada:" + searchTerm + "</p>";
 
     // Function to check if the search term exists in the text (case-insensitive)
