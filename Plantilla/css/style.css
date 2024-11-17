@@ -61,6 +61,10 @@ img {
     align-self: center;
 }
 
+a {
+    font-weight: bold;
+}
+
 nav {
     display: flex;
     flex-wrap: wrap;
@@ -72,7 +76,6 @@ nav a{
     background-color: #add8e6;
     margin: 0.4rem;
     padding: 0.6rem;
-    font-weight: bold;
     text-align: center;
     text-decoration: none;
 }

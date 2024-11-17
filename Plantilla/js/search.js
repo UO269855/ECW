@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /**
      * Función que busca una palabra en el contenido de la página, sin tener en cuenta mayúsculas
      * @param {*} text Texto en el que buscar la palabra
-     * @param {*} searchTerm
+     * @param {*} searchTerm palabra que estamos buscando
      * @returns
      */
     function isSubstringMatch(text, searchTerm) {
