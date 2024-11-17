@@ -101,3 +101,23 @@ h2, h3, h4 {
     padding: 0.4rem;
     font-weight: bold;
 }
+
+header form {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.4rem;
+}
+
+header form label{
+    display: flex;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+header form input {
+    margin-right: 0.2rem;
+}
+
+header form button {
+    font-weight: bold;
+}
