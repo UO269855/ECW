@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-    <title>Página de Inicio</title>
+    <title>Resultados de su búsqueda</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -19,16 +19,13 @@
             a.appendChild(r);
         })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
     </script>
+
+    <script src="js/search.js" defer></script>
 </head>
 
 <body>
     <header>
         <h1>Web personal de Álex Caso Díaz</h1>
-        <form action="search.html" method="get">
-            <label for="searchTerm">Búsqueda:</label>
-            <input type="text" id="searchTerm" name="buscarPalabra" required>
-            <button type="submit">Buscar</button>
-        </form>
         <nav>
             <a href="index.html">Inicio</a>
             <a href="aboutMe.html">Datos sobre sobre mi</a>
@@ -37,12 +34,8 @@
         </nav>
     </header>
     <main>
-        <h2>Inicio</h2>
-        <section>
-            <p>Mi nombre es Álex Caso Díaz, alumno del Máster Universitario en Ingeniería Web. En esta página web podrás
-                ver información personal sobre mi y una serie de proyectos personales pasados y futuros.</p>
-            <img src="images/Yo.jpg" alt="Foto de Álex Caso">
-        </section>
+        <h2>Resultados de su búsqueda</h2>
+        <section id="resultados"></section>
     </main>
     <footer>
         Universidad de Oviedo
