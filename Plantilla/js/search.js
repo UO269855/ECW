@@ -102,12 +102,21 @@ document.addEventListener("DOMContentLoaded", function () {
       resultsContainer.innerHTML += resultHTML;
     }
 
+    /**
+     * Función que comprueba si se ha encontrado un resultado o no
+     */
+    function checkResults() {
+      const resultsContainer = document.getElementById("resultados");
+      if (resultsContainer.children.length === 0) {
+        resultsContainer.innerHTML =
+          "<p>No hay resultados para su búsqueda</p>";
+      }
+    }
+
     // Buscamos en todos los ficheros
     files.forEach((file) => searchFile(file, searchTerm));
 
-    // Si no hay resultados, mostramos un mensaje al usuario
-    if (resultsContainer.children.length === 0) {
-      resultsContainer.innerHTML = "<p>No hay resultados para su búsqueda</p>";
-    }
+    // Si no hay resultados, mostramos un error
+    checkResults();
   }
 });
