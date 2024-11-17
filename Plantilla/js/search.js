@@ -1,3 +1,4 @@
+//Esperamos a que se cargue el árbol DON para hacer la búsqueda.
 document.addEventListener("DOMContentLoaded", function () {
   // Obtenemos la palabra que queremos buscar, que se envía por parámetro
   const urlParams = new URLSearchParams(window.location.search);
@@ -8,15 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("resultados").innerHTML =
       "<p>No se ha introducido ninguna palabra para la búsqueda</p>";
   } else {
-    // Indicamos los ficheros en los que buscar la palabra
+    //Inidcamos los ficheros en los que buscar la palabra
     const files = [
       "aboutMe.html",
       "index.html",
       "personalProjects.html",
       "help.html",
     ];
-
-    // Obtenemos el contenedor donde mostrar los resultados y lo limpiamos.
+    //Obtenemos el contenedor donde mostrar los resultados y lo limpiamos.
     const resultsContainer = document.getElementById("resultados");
     resultsContainer.innerHTML = "";
 
@@ -37,23 +37,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /**
-     * Función que obtiene el elemento HTML que contiene la palabra buscada.
-     * Extrae el contenido de ese elemento donde se encuentra la palabra.
-     * @param {*} doc El documento HTML donde se busca la palabra
-     * @param {*} searchTerm La palabra que estamos buscando
-     * @returns El contenido del elemento donde se encuentra la palabra
+     * Función que obtiene la oración en la que se encuentra la palabra buscada.
+     * @param {*} text Texto en el que buscar la palabra
+     * @param {*} searchTerm Palabra que estamos buscando
+     * @returns La oración dónde se encuentra la palabra
      */
-    function extractElementWithSearchTerm(doc, searchTerm) {
-      // Buscamos en todos los elementos de tipo texto dentro del body
-      const elements = doc.body.querySelectorAll(
-        "p, div, span, h1, h2, h3, li"
-      ); // Se pueden añadir más tipos de elementos según sea necesario.
-      for (const element of elements) {
-        if (isSubstringMatch(element.textContent, searchTerm)) {
-          return element; // Devolvemos el primer elemento que contiene la palabra
-        }
-      }
-      return null; // Si no se encuentra la palabra en ningún elemento
+    function extractSentence(text, searchTerm) {
+      const regex = new RegExp(`([^.]*?${searchTerm}[^.]*\.)`, "gi");
+      const match = text.match(regex);
+      return match ? match[0] : "No se ha encontrado la palabra en el texto";
     }
 
     /**
@@ -63,27 +55,22 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     async function searchFile(file, searchTerm) {
       try {
-        // Cargamos el fichero y obtenemos el texto que contiene.
+        //Cargamos el fichero y obtenemos el texto que contiene.
         const response = await fetch(file);
         const text = await response.text();
 
-        // Creamos un parseador que tenga el árbol DOM del texto del fichero
+        // Creamos un parseador que tenga el árbol DOM del texto del fichero y extraemos su body para buscar la palabra
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
+        const bodyText = doc.body.main.textContent || doc.body.main.innerText;
+        // Obtenemos el título del contenido para mostrarlo en la búsqueda
+        const bodyTitle = doc.querySelector("h2").innerText;
 
-        // Buscamos el elemento que contiene la palabra
-        const elementWithSearchTerm = extractElementWithSearchTerm(
-          doc,
-          searchTerm
-        );
-
-        if (elementWithSearchTerm) {
-          // Si se encuentra, resaltar la palabra y mostrar el resultado
-          const highlightedText = highlightSearchTerm(
-            elementWithSearchTerm.innerHTML,
-            searchTerm
-          );
-          displayResults(file, elementWithSearchTerm, highlightedText);
+        // Comprobamos si la palabra se encuentra dentro del texto y mostramos el resultado
+        if (isSubstringMatch(bodyText, searchTerm)) {
+          const sentence = extractSentence(bodyText, searchTerm);
+          const highlightedSentence = highlightSearchTerm(sentence, searchTerm);
+          displayResults(file, bodyTitle, highlightedSentence);
         }
       } catch (error) {
         console.error("Error fetching or processing file:", file, error);
@@ -92,33 +79,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /**
      * Función que resalta la palabra buscada en negrita
-     * @param {*} text Texto donde se encontró la palabra
+     * @param {*} sentence Frase donde se encontró la palabra
      * @param {*} searchTerm Palabra buscada
-     * @returns El texto con la palabra resaltada en negrita
+     * @returns La frase con la palabra resaltada en negrita
      */
-    function highlightSearchTerm(text, searchTerm) {
+    function highlightSearchTerm(sentence, searchTerm) {
       const regex = new RegExp(`(${searchTerm})`, "gi");
-      return text.replace(regex, "<strong>$1</strong>");
+      return sentence.replace(regex, "<strong>$1</strong>");
     }
 
     /**
      * Función que muestra el resultado en la pantalla de búsqueda
      * @param {*} file Referencia al fichero en el que hemos encontrado resultados
-     * @param {*} element Elemento HTML que contiene la palabra
-     * @param {*} highlightedText El texto resaltado con la palabra buscada
+     * @param {*} bodyTitle Título del body del fichero que estamos consultando
+     * @param {*} sentence Frase donde se ha encontrado la palabra buscada
      */
-    function displayResults(file, element, highlightedText) {
-      const fileLink =
-        "<a href=" +
-        file +
-        ">" +
-        element.tagName +
-        " - " +
-        element.textContent.substring(0, 30) +
-        "...</a>"; // Short description of the element
+    function displayResults(file, bodyTitle, sentence) {
+      const fileLink = "<a href=" + file + ">" + bodyTitle + "</a>";
       let resultHTML = '<article class="result">' + fileLink + "</article>";
-      resultHTML +=
-        '<article class="result"><p>' + highlightedText + "</p></article>";
+      resultHTML += '<article class="result"><p>' + sentence + "</p></article>";
 
       resultsContainer.innerHTML += resultHTML;
     }
@@ -134,18 +113,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Función principal que se encarga de buscar en todos los ficheros
+    /**
+     * Método que busca en todos los ficheros la palabra especificada en la búsqueda
+     */
     async function searchFiles() {
-      // Buscamos en todos los ficheros
       for (const file of files) {
-        await searchFile(file, searchTerm); // Esperamos a que se termine de buscar en cada fichero
+        await searchFile(file, searchTerm);
       }
 
-      // Después de buscar en todos los ficheros, verificamos si se encontraron resultados
+      // Si no hay resultados, mostramos un error
       checkResults();
     }
 
-    // Iniciamos la búsqueda
     searchFiles();
   }
 });
