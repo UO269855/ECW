@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function extractSentence(text, searchTerm) {
       // Regular expression to find the sentence containing the search term
-      const regex = new RegExp("([^.]*?${searchTerm}[^.]*.)", "gi");
+      const regex = new RegExp(`([^.]*?${searchTerm}[^.]*\.)`, "gi");
       const match = text.match(regex);
       return match ? match[0] : "Sentence not found";
     }
