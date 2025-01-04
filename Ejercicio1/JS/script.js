@@ -22,7 +22,6 @@ function hideLoadingOverlay() {
  * @returns Continente donde está el epicentro
  */
 function getContinent(lat, lng) {
-
   if (lat >= -37 && lat <= 37 && lng >= -18 && lng <= 51) {
     return "Africa";
   }
@@ -301,7 +300,7 @@ function fetchEarthquakeData(
         error
       );
       document.getElementById("errorMessage").textContent =
-        "Error recuperando información sobre los terremotos:",
+        "Error recuperando información sobre los terremotos:";
     })
     .finally(() => {
       hideLoadingOverlay();
@@ -357,15 +356,15 @@ document.getElementById("submit").addEventListener("click", () => {
  */
 function getRadius(magnitude) {
   if (magnitude >= 7.0) {
-    return 300; 
+    return 300;
   } else if (magnitude >= 6.0) {
-    return 100; 
+    return 100;
   } else if (magnitude >= 5.0) {
-    return 30; 
+    return 30;
   } else if (magnitude >= 4.0) {
-    return 10; 
+    return 10;
   } else {
-    return 5; 
+    return 5;
   }
 }
 
@@ -400,7 +399,7 @@ function updateEarthquakeData(epicenter) {
  */
 function clearMarkers() {
   markers.forEach(function (marker) {
-    map.removeLayer(marker); 
+    map.removeLayer(marker);
   });
   markers = [];
 }
