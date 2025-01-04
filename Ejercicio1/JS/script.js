@@ -185,12 +185,12 @@ function toggleMagnitudeInputs() {
 
   if (disableMagnitudeFilter) {
     // Disable the inputs when the checkbox is checked
-    minMagnitudeInput.disabled = true;
-    maxMagnitudeInput.disabled = true;
-  } else {
-    // Enable the inputs when the checkbox is unchecked
     minMagnitudeInput.disabled = false;
     maxMagnitudeInput.disabled = false;
+  } else {
+    // Enable the inputs when the checkbox is unchecked
+    minMagnitudeInput.disabled = true;
+    maxMagnitudeInput.disabled = true;
   }
 }
 
@@ -222,20 +222,16 @@ function fetchEarthquakeData(
     .then((data) => {
       var epicenters = parseQuakeML(data);
 
-      // Get the state of the "Disable Magnitude Filter" checkbox
       var disableMagnitudeFilter = document.getElementById(
         "disableMagnitudeFilter"
       ).checked;
 
-      // Filter by magnitude and continent
       var filteredEpicenters = epicenters.filter((epicenter) => {
-        // Apply magnitude filter only if it's not disabled
         var magnitudeCondition =
-          disableMagnitudeFilter ||
+          !disableMagnitudeFilter ||
           (epicenter.magnitude >= minMagnitude &&
             epicenter.magnitude <= maxMagnitude);
 
-        // Apply continent filter if selected
         var continentCondition =
           continentFilter === "All" || epicenter.continent === continentFilter;
 
@@ -331,8 +327,15 @@ document.getElementById("submit").addEventListener("click", () => {
   var timeRange = getSelectedTimeRange();
   var continentFilter = getSelectedContinent();
 
+  var disableMagnitudeFilter = document.getElementById(
+    "disableMagnitudeFilter"
+  ).checked;
+
   if (timeRange) {
-    if (minMagnitude <= maxMagnitude) {
+    if (
+      minMagnitude <= maxMagnitude ||
+      (disableMagnitudeFilter && minMagnitude > maxMagnitude)
+    ) {
       fetchEarthquakeData(
         timeRange,
         minMagnitude,
@@ -380,15 +383,15 @@ function updateEarthquakeData(epicenter) {
   const dataContent = `
     <h2>Terremoto seleccionado</h2>
     <h3>Localización:</h3> <p>${epicenter.place}</p>
-    <h3>Magnitud:</h3>${epicenter.magnitude.toFixed(2)}</p>
-    <h3>Latitud:</h3>${epicenter.lat.toFixed(2)}</p>
-    <h3>Longitud:</h3>${epicenter.lng.toFixed(2)}</p>
-    <h3>Profundidad:</h3>${
+    <h3>Magnitud:</h3><p>${epicenter.magnitude.toFixed(2)}</p>
+    <h3>Latitud:</h3><p>${epicenter.lat.toFixed(2)}º</p>
+    <h3>Longitud:</h3><p>${epicenter.lng.toFixed(2)}º</p>
+    <h3>Profundidad:</h3><p>${
       epicenter.depth ? epicenter.depth.toFixed(2) + " km" : "N/A"
     }</p>
-    <h3>Tiempo:</h3>${new Date(epicenter.time).toLocaleString()}</p>
-    <h3>Radio:</h3>${epicenter.radius} km</p>
-    <h3>Continente:</h3>${continent}</p>
+    <h3>Fecha:</h3><p>${new Date(epicenter.time).toLocaleString()}</p>
+    <h3>Radio:</h3><p>${epicenter.radius} km</p>
+    <h3>Continente:</h3><p>${continent}</p>
   `;
 
   earthquakeDataDiv.innerHTML = dataContent;

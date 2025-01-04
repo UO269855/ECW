@@ -1,31 +1,86 @@
+/* General */
+
 body {
-    display: flex;
-    flex-direction: column;
     font-size: 12px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#data,
-#map {
-    height: 45rem;
-    width: 90%;
+header {
+    display: flex;
+    justify-content: center;
 }
 
-#data {
+h1 {
+    font-size: 2rem;
+}
+
+#errorMessage {
+    display: flex;
+    justify-content: center;
+    color: red;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Filtros */
+
+#filters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+#filterParameters {
     display: flex;
     flex-direction: row;
 }
 
-#map {
+.filterContainer {
     margin-right: 2rem;
 }
 
-#earthquakeData {
+legend, .filterContainer>label {
+    font-size: 1.3rem;
+}
+
+button {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.filter, select, option {
+    font-size: 1.1rem;
+}
+
+/* Parte del mapa */
+main {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    font-size: large;
-    width: 10%;
 }
+
+#data { 
+    display: flex;
+    flex-direction: row;
+}
+
+#map-container {
+    width: 85%;
+    margin-right: 2rem;
+}
+
+#map {
+    height: 45rem;
+}
+
+/* Overlay de cargando */
 
 #loadingOverlay {
     position: absolute;
@@ -50,38 +105,22 @@ body {
     border-radius: 0.5rem;
 }
 
-.filterContainer {
-    margin-bottom: 1rem;
-}
 
-.button-container button {
-    margin-right: 0.5rem;
-}
+/* Parte lateral de datos del terremoto */
 
-#message {
-    color: red;
-    font-weight: bold;
-}
-
-#filters{
-    display: flex;
-    flex-direction: row;
-    font-size: 1.2rem;
-    margin-right: 1rem;
-}
-
-#filterParameters {
+#earthquakeData {
     display: flex;
     flex-direction: column;
+    width: 10%;
+    margin-bottom: 0rem;
 }
 
-#magnitudes {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    margin-right: 1rem;
-}
-
-#continentFilter {
+#earthquakeData h3 {
+    margin-bottom: 0rem;
     font-size: 1.2rem;
+}
+
+#earthquakeData p{
+    margin-bottom: 0rem;
+    font-size: 1rem;
 }
