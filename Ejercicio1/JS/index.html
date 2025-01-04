@@ -13,16 +13,61 @@
 
 <body>
     <h1>Earthquake Epicenter Map</h1>
-    <div class="button-container">
-        <button id="pastHour">Past Hour</button>
-        <button id="pastDay">Past Day</button>
-        <button id="past7Days">Past 7 Days</button>
-        <button id="past30Days">Past 30 Days</button>
+    <div id="filters">
+        <div id="filterParameters">
+            <div id="magnitudes">
+                <label for="disableMagnitudeFilter">
+                    Disable Magnitude Filter
+                </label>
+                <input type="checkbox" id="disableMagnitudeFilter">
+
+                <label for="minMagnitude">Minimum Magnitude:</label>
+                <input type="number" id="minMagnitude" value="0" min="0" max="10" step="0.1">
+
+                <label for="maxMagnitude">Maximum Magnitude:</label>
+                <input type="number" id="maxMagnitude" value="10" min="0" max="10" step="0.1">
+            </div>
+
+            <div id="continent">
+                <select id="continentFilter">
+                    <option value="All">All</option>
+                    <option value="Africa">Africa</option>
+                    <option value="Asia">Asia</option>
+                    <option value="Europe">Europe</option>
+                    <option value="North America">North America</option>
+                    <option value="South America">South America</option>
+                    <option value="Australia/Oceania">Australia/Oceania</option>
+                    <option value="Antarctica">Antarctica</option>
+                </select>
+            </div>
+
+            <div id="times">
+                <label>
+                    <input type="radio" name="timeRange" value="hour"> Past Hour
+                </label>
+                <label>
+                    <input type="radio" name="timeRange" value="day"> Past Day
+                </label>
+                <label>
+                    <input type="radio" name="timeRange" value="week"> Past 7 Days
+                </label>
+                <label>
+                    <input type="radio" name="timeRange" value="month"> Past 30 Days
+                </label>
+            </div>
+        </div>
+
+        <button id="submit">Submit</button>
     </div>
+
     <div id="message"></div>
     <div id="map">
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="script.js"></script>
+    </div>
+
+    <div id="loadingOverlay" style="display: none;">
+        <div id="loadingText">Loading...</div>
     </div>
 </body>
 
