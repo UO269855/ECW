@@ -2,12 +2,29 @@ body {
     display: flex;
     flex-direction: column;
     font-size: 12px;
-    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#data,
+#map {
+    height: 45rem;
+    width: 90%;
+}
+
+#data {
+    display: flex;
+    flex-direction: row;
 }
 
 #map {
-    height: 45rem;
-    width:90%;
+    margin-right: 2rem;
+}
+
+#earthquakeData {
+    display: flex;
+    flex-direction: column;
+    font-size: large;
+    width: 10%;
 }
 
 #loadingOverlay {
@@ -24,6 +41,7 @@ body {
     font-size: 1.2rem;
     font-weight: bold;
     z-index: 9999;
+    display: none;
 }
 
 #loadingText {
@@ -32,22 +50,17 @@ body {
     border-radius: 0.5rem;
 }
 
-.button-container {
-    margin-bottom: 10px;
+.filterContainer {
+    margin-bottom: 1rem;
 }
 
 .button-container button {
-    margin-right: 5px;
-}
-
-.input-container {
-    margin-bottom: 10px;
+    margin-right: 0.5rem;
 }
 
 #message {
     color: red;
     font-weight: bold;
-    margin-top: 10px;
 }
 
 #filters{
@@ -60,4 +73,15 @@ body {
 #filterParameters {
     display: flex;
     flex-direction: column;
+}
+
+#magnitudes {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    margin-right: 1rem;
+}
+
+#continentFilter {
+    font-size: 1.2rem;
 }

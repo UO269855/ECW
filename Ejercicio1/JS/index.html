@@ -4,71 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earthquake Epicenter Map</title>
+    <title>Mapa de terremotos</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
-
-
 </head>
 
 <body>
-    <h1>Earthquake Epicenter Map</h1>
+    <header>
+        <h1>Mapa de información sobre terremotos</h1>
+    </header>
     <div id="filters">
-        <div id="filterParameters">
+        <div id="filterParameters" class="filterContainer">
             <div id="magnitudes">
+                <p>Magnitud</p>
                 <label for="disableMagnitudeFilter">
-                    Disable Magnitude Filter
+                    Activar/desactivar
                 </label>
                 <input type="checkbox" id="disableMagnitudeFilter">
 
-                <label for="minMagnitude">Minimum Magnitude:</label>
+                <label for="minMagnitude">Mínimo:</label>
                 <input type="number" id="minMagnitude" value="0" min="0" max="10" step="0.1">
 
-                <label for="maxMagnitude">Maximum Magnitude:</label>
+                <label for="maxMagnitude">Máximo:</label>
                 <input type="number" id="maxMagnitude" value="10" min="0" max="10" step="0.1">
             </div>
 
-            <div id="continent">
+            <div id="continent" class="filterContainer">
+                <label for="continentFilter">
+                    Continente:
+                </label>
                 <select id="continentFilter">
-                    <option value="All">All</option>
+                    <option value="All">Todos</option>
                     <option value="Africa">Africa</option>
                     <option value="Asia">Asia</option>
-                    <option value="Europe">Europe</option>
-                    <option value="North America">North America</option>
-                    <option value="South America">South America</option>
-                    <option value="Australia/Oceania">Australia/Oceania</option>
-                    <option value="Antarctica">Antarctica</option>
+                    <option value="Europe">Europa</option>
+                    <option value="America">America</option>
+                    <option value="Australia/Oceania">Australia/Oceaníaa</option>
+                    <option value="Antarctica">Antarctida</option>
                 </select>
             </div>
 
-            <div id="times">
-                <label>
-                    <input type="radio" name="timeRange" value="hour"> Past Hour
+            <div id="times" class="filterContainer">
+                <label for="continentFilter">
+                    Tiempo:
                 </label>
                 <label>
-                    <input type="radio" name="timeRange" value="day"> Past Day
+                    <input type="radio" name="timeRange" value="hour"> Última Hora
                 </label>
                 <label>
-                    <input type="radio" name="timeRange" value="week"> Past 7 Days
+                    <input type="radio" name="timeRange" value="day"> Últimas 24h
                 </label>
                 <label>
-                    <input type="radio" name="timeRange" value="month"> Past 30 Days
+                    <input type="radio" name="timeRange" value="week"> Últimos 7 Días
+                </label>
+                <label>
+                    <input type="radio" name="timeRange" value="month"> Últimos 30 Días
                 </label>
             </div>
         </div>
 
-        <button id="submit">Submit</button>
+        <button id="submit">Buscar</button>
     </div>
+    <main>
+        <div id="errorMessage"></div>
+        <div id="data">
+            <div id="map">
+                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                <script src="script.js"></script>
+            </div>
+            <div id="earthquakeData">
+                <h2>Terremoto seleccionado</h2>
+            </div>
+        </div>
+        <div id="loadingOverlay">
+            <div id="loadingText">Cargando...</div>
+        </div>
+    </main>
 
-    <div id="message"></div>
-    <div id="map">
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script src="script.js"></script>
-    </div>
-
-    <div id="loadingOverlay" style="display: none;">
-        <div id="loadingText">Loading...</div>
-    </div>
 </body>
 
 </html>

@@ -1,7 +1,5 @@
-// Initialize the map
+// Inicializamos el mapa
 var map = L.map("map").setView([0, 0], 2);
-
-// Add OpenStreetMap tiles
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -9,43 +7,54 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 var markers = [];
 
-// Function to show the loading overlay
 function showLoadingOverlay() {
   document.getElementById("loadingOverlay").style.display = "flex";
 }
 
-// Function to hide the loading overlay
 function hideLoadingOverlay() {
   document.getElementById("loadingOverlay").style.display = "none";
 }
 
-// Function to determine continent based on latitude and longitude
+/**
+ * Función que indica el continente donde se ha producido el terremoto
+ * @param {*} lat latitud del epicentro del terremoto
+ * @param {*} lng longitud del epicentro del terremoto
+ * @returns Continente donde está el epicentro
+ */
 function getContinent(lat, lng) {
-  if (lat >= -37.5 && lat <= 37.5 && lng >= -18.5 && lng <= 51.5) {
+
+  if (lat >= -37 && lat <= 37 && lng >= -18 && lng <= 51) {
     return "Africa";
   }
+
   if (lat >= -90 && lat <= -60 && lng >= -180 && lng <= 180) {
-    return "Antarctica";
+    return "Antartida";
   }
-  if (lat >= 0 && lat <= 80 && lng >= 26 && lng <= 180) {
+
+  if (lat >= 10 && lat <= 80 && lng >= 26 && lng <= 180) {
     return "Asia";
   }
-  if (lat >= -55 && lat <= 10 && lng >= 112 && lng <= 180) {
-    return "Australia/Oceania";
+
+  if (lat >= -55 && lat <= -10 && lng >= 112 && lng <= 180) {
+    return "Australia/Oceanía";
   }
-  if (lat >= 34.5 && lat <= 71.5 && lng >= -25.5 && lng <= 45.5) {
-    return "Europe";
+
+  if (lat >= 34 && lat <= 71 && lng >= -25 && lng <= 45) {
+    return "Europa";
   }
-  if (lat >= 7 && lat <= 83 && lng >= -180 && lng <= -60) {
-    return "North America";
+
+  if (lat >= -60 && lat <= 83 && lng >= -180 && lng <= -35) {
+    return "America";
   }
-  if (lat >= -60 && lat <= 13 && lng >= -90 && lng <= -35) {
-    return "South America";
-  }
-  return "Unknown";
+
+  return "Desconocido";
 }
 
-// Modified parseQuakeML function
+/**
+ * Función que parsea un fichero quakeML para recuperar su información
+ * @param {*} quakeML XML con los datos del terremoto
+ * @returns Lista con los epicentros de los terremotos
+ */
 function parseQuakeML(quakeML) {
   var parser = new DOMParser();
   var xmlDoc = parser.parseFromString(quakeML, "application/xml");
@@ -87,7 +96,6 @@ function parseQuakeML(quakeML) {
       null
     ).singleNodeValue;
 
-    // Extracting Depth and Time
     var depthElement = xmlDoc.evaluate(
       ".//q:depth/q:value",
       origin,
@@ -144,10 +152,13 @@ function parseQuakeML(quakeML) {
         var longitude = parseFloat(longitudeElement.textContent);
         var magnitude = parseFloat(magnitudeValueElement.textContent);
         var place = placeElement.textContent;
-        var depth = depthElement ? parseFloat(depthElement.textContent) : null;
+        var depth = depthElement
+          ? parseFloat(depthElement.textContent) / 1000
+          : null;
         var time = timeElement ? timeElement.textContent : null;
 
         if (!isNaN(latitude) && !isNaN(longitude)) {
+          var radius = getRadius(magnitude); // Calculate the radius based on magnitude
           epicenters.push({
             lat: latitude,
             lng: longitude,
@@ -155,6 +166,7 @@ function parseQuakeML(quakeML) {
             place: place,
             depth: depth,
             time: time,
+            radius: radius, // Add the radius info
             continent: getContinent(latitude, longitude), // Add continent info
           });
         }
@@ -232,7 +244,7 @@ function fetchEarthquakeData(
       });
 
       if (filteredEpicenters.length > 0) {
-        document.getElementById("message").textContent = "";
+        document.getElementById("errorMessage").textContent = "";
 
         markers.forEach((marker) => map.removeLayer(marker));
         markers = [];
@@ -260,8 +272,15 @@ function fetchEarthquakeData(
           );
 
           marker.on("click", function () {
-            fetchShakeMap(epicenter.id); // Assuming `id` is a unique earthquake identifier
+            updateEarthquakeData(epicenter);
           });
+
+          L.circle([epicenter.lat, epicenter.lng], {
+            radius: epicenter.radius * 1000, // Convert to meters
+            color: "blue",
+            fill: true,
+            fillOpacity: 0.2,
+          }).addTo(map);
 
           // Extend the bounds to include the current marker
           bounds.extend(marker.getLatLng());
@@ -272,14 +291,17 @@ function fetchEarthquakeData(
         // After all markers are added, adjust the map's view to fit the bounds of the markers
         map.fitBounds(bounds);
       } else {
-        document.getElementById("message").textContent =
-          "No earthquakes found within the selected parameters.";
+        document.getElementById("errorMessage").textContent =
+          "No se han encontrado terremotos con los filtros seleccionados";
       }
     })
     .catch((error) => {
-      console.error("Error fetching earthquake data:", error);
-      document.getElementById("message").textContent =
-        "There was an error fetching earthquake data.";
+      console.error(
+        "Error recuperando información sobre los terremotos:",
+        error
+      );
+      document.getElementById("errorMessage").textContent =
+        "Error recuperando información sobre los terremotos:",
     })
     .finally(() => {
       hideLoadingOverlay();
@@ -319,46 +341,66 @@ document.getElementById("submit").addEventListener("click", () => {
         continentFilter
       );
     } else {
-      document.getElementById("message").textContent =
-        "Minimum magnitude must be less than or equal to maximum magnitude.";
+      document.getElementById("errorMessage").textContent =
+        "La magnitud mínima debe ser menor o igual que la magnitud máxima";
     }
   } else {
-    document.getElementById("message").textContent =
-      "Please select a time range.";
+    document.getElementById("errorMessage").textContent =
+      "Por favor, seleccione un rango de tiempo";
   }
 });
 
-// ShakeMap function (no changes)
-function fetchShakeMap(earthquakeID) {
-  // Fetch the ShakeMap URL for the earthquake (USGS API provides a ShakeMap URL)
-  let shakeMapUrl = `https://earthquake.usgs.gov/earthquakes/eventpage/${earthquakeID}/shakemap`;
+/**
+ * Función que estima el radio del terremoto en base a su magnitud
+ * @param {*} magnitude Magnitud del terremoto
+ * @returns Radio en kilómetros del terremoto
+ */
+function getRadius(magnitude) {
+  if (magnitude >= 7.0) {
+    return 300; 
+  } else if (magnitude >= 6.0) {
+    return 100; 
+  } else if (magnitude >= 5.0) {
+    return 30; 
+  } else if (magnitude >= 4.0) {
+    return 10; 
+  } else {
+    return 5; 
+  }
+}
 
-  // Fetch the ShakeMap data from the USGS (this is a simplified example; you'd need the actual URL for your earthquake)
-  fetch(shakeMapUrl)
-    .then((response) => response.json())
-    .then((data) => {
-      // Assuming the ShakeMap URL is in the data response:
-      var shakeMapImageUrl = data.shakeMapUrl; // This will vary based on the API
+/**
+ * Función que recupera los datos del terremoto y muestra sus datos en el html
+ * @param {*} epicenter Datos del epicentro del terremoto
+ */
+function updateEarthquakeData(epicenter) {
+  const earthquakeDataDiv = document.getElementById("earthquakeData");
 
-      // If the ShakeMap URL is valid, overlay it on the map
-      if (shakeMapImageUrl) {
-        var bounds = [
-          [epicenter.lat - 0.1, epicenter.lng - 0.1], // Adjust these bounds for proper overlay
-          [epicenter.lat + 0.1, epicenter.lng + 0.1],
-        ];
+  var continent = getContinent(epicenter.lat, epicenter.lng);
 
-        var imageOverlay = L.imageOverlay(shakeMapImageUrl, bounds).addTo(map);
-        imageOverlay.bringToFront(); // Ensure it is on top of other layers
+  const dataContent = `
+    <h2>Terremoto seleccionado</h2>
+    <h3>Localización:</h3> <p>${epicenter.place}</p>
+    <h3>Magnitud:</h3>${epicenter.magnitude.toFixed(2)}</p>
+    <h3>Latitud:</h3>${epicenter.lat.toFixed(2)}</p>
+    <h3>Longitud:</h3>${epicenter.lng.toFixed(2)}</p>
+    <h3>Profundidad:</h3>${
+      epicenter.depth ? epicenter.depth.toFixed(2) + " km" : "N/A"
+    }</p>
+    <h3>Tiempo:</h3>${new Date(epicenter.time).toLocaleString()}</p>
+    <h3>Radio:</h3>${epicenter.radius} km</p>
+    <h3>Continente:</h3>${continent}</p>
+  `;
 
-        // Optionally, you can close the overlay if the marker is clicked again
-        imageOverlay.on("click", function () {
-          map.removeLayer(imageOverlay);
-        });
-      } else {
-        console.error("ShakeMap not found for this earthquake.");
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching ShakeMap:", error);
-    });
+  earthquakeDataDiv.innerHTML = dataContent;
+}
+
+/**
+ * Función que limpia la lista de marcadores de los epicentros y los elimina del mapa
+ */
+function clearMarkers() {
+  markers.forEach(function (marker) {
+    map.removeLayer(marker); 
+  });
+  markers = [];
 }
