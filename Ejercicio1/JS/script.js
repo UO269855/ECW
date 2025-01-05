@@ -258,12 +258,12 @@ function fetchEarthquakeData(
 
           var marker = L.marker([roundedLatitude, roundedLongitude]).addTo(map);
           marker.bindPopup(
-            `<b>${epicenter.place}</b><br>
-            Magnitude: ${roundedMagnitude}<br>
-            Latitude: ${roundedLatitude}<br>
-            Longitude: ${roundedLongitude}<br>
-            Depth: ${roundedDepth ? roundedDepth + " km" : "N/A"}<br>
-            Time: ${new Date(epicenter.time).toLocaleString()}`
+            `<h3>${epicenter.place}</h3>
+            <ul><li>Magnitude: ${roundedMagnitude}</li>
+            <li>Latitude: ${roundedLatitude}</li>
+            <li>Longitude: ${roundedLongitude}</li>
+            <li>Depth: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
+            <li>Time: ${new Date(epicenter.time).toLocaleString()}</li></ul>`
           );
 
           marker.on("click", function () {
