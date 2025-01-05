@@ -72,6 +72,8 @@ function parseQuakeML(quakeML) {
   var epicenters = [];
 
   for (var i = 0; i < events.snapshotLength; i++) {
+    // Recuperamos los datos del terremoto
+
     var event = events.snapshotItem(i);
     var origin = xmlDoc.evaluate(
       ".//q:origin",
@@ -156,8 +158,8 @@ function parseQuakeML(quakeML) {
           : null;
         var time = timeElement ? timeElement.textContent : null;
 
+        // Incluimos los datos en el terremoto
         if (!isNaN(latitude) && !isNaN(longitude)) {
-          var radius = getRadius(magnitude); // Calculate the radius based on magnitude
           epicenters.push({
             lat: latitude,
             lng: longitude,
@@ -165,8 +167,8 @@ function parseQuakeML(quakeML) {
             place: place,
             depth: depth,
             time: time,
-            radius: radius, // Add the radius info
-            continent: getContinent(latitude, longitude), // Add continent info
+            radius: getRadius(magnitude),
+            continent: getContinent(latitude, longitude),
           });
         }
       }
@@ -175,7 +177,9 @@ function parseQuakeML(quakeML) {
   return epicenters;
 }
 
-// Function to enable or disable the magnitude inputs
+/**
+ *Función que maneja si el filtro de magnitud está activo o no
+ */
 function toggleMagnitudeInputs() {
   var disableMagnitudeFilter = document.getElementById(
     "disableMagnitudeFilter"
@@ -184,24 +188,28 @@ function toggleMagnitudeInputs() {
   var maxMagnitudeInput = document.getElementById("maxMagnitude");
 
   if (disableMagnitudeFilter) {
-    // Disable the inputs when the checkbox is checked
     minMagnitudeInput.disabled = false;
     maxMagnitudeInput.disabled = false;
   } else {
-    // Enable the inputs when the checkbox is unchecked
     minMagnitudeInput.disabled = true;
     maxMagnitudeInput.disabled = true;
   }
 }
 
-// Add an event listener to the checkbox to toggle the inputs
 document
   .getElementById("disableMagnitudeFilter")
   .addEventListener("change", toggleMagnitudeInputs);
 
-// Initial check to set the state of the inputs
 toggleMagnitudeInputs();
 
+/**
+ * Función que se encarga de recuperar la información de los terremotos en base a los filtros aplicados.
+ * Toda la información procede de https://earthquake.usgs.gov/earthquakes/feed/v1.0/quakeml.php
+ * @param {*} timeRange Espacio de tiempo en el cual queremos consultar la actividad sísmica
+ * @param {*} minMagnitude Magnitud mínima de los terremotos que queramos consultar
+ * @param {*} maxMagnitude Magnitud máxima de los terremotos que queramos consultar
+ * @param {*} continentFilter Filtro con el continente en el que queramos consultar la actividad sísmica
+ */
 function fetchEarthquakeData(
   timeRange,
   minMagnitude,
@@ -215,7 +223,9 @@ function fetchEarthquakeData(
   fetch(url)
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
+        throw new Error(
+          `Se ha producido un error conectando con el API: ${response.statusText}`
+        );
       }
       return response.text();
     })
@@ -244,11 +254,9 @@ function fetchEarthquakeData(
         markers.forEach((marker) => map.removeLayer(marker));
         markers = [];
 
-        // Create a LatLngBounds object to store the bounds of all markers
         var bounds = L.latLngBounds();
 
         filteredEpicenters.forEach((epicenter) => {
-          // Round the values to 2 decimals
           var roundedMagnitude = epicenter.magnitude.toFixed(2);
           var roundedLatitude = epicenter.lat.toFixed(2);
           var roundedLongitude = epicenter.lng.toFixed(2);
@@ -271,19 +279,17 @@ function fetchEarthquakeData(
           });
 
           L.circle([epicenter.lat, epicenter.lng], {
-            radius: epicenter.radius * 1000, // Convert to meters
+            radius: epicenter.radius * 1000,
             color: "blue",
             fill: true,
             fillOpacity: 0.2,
           }).addTo(map);
 
-          // Extend the bounds to include the current marker
           bounds.extend(marker.getLatLng());
 
           markers.push(marker);
         });
 
-        // After all markers are added, adjust the map's view to fit the bounds of the markers
         map.fitBounds(bounds);
       } else {
         document.getElementById("errorMessage").textContent =
@@ -303,7 +309,10 @@ function fetchEarthquakeData(
     });
 }
 
-// Get the selected time range
+/**
+ * Función que recupera el rango de tiempo que queremos consultar
+ * @returns Rango a consultar con la nomenclatura de https://earthquake.usgs.gov/earthquakes/feed/v1.0/quakeml.php
+ */
 function getSelectedTimeRange() {
   var timeRange;
   document.querySelectorAll('input[name="timeRange"]').forEach((radio) => {
@@ -314,13 +323,15 @@ function getSelectedTimeRange() {
   return timeRange;
 }
 
-// Get selected continent
+/**
+ * Función que recupera el continente que queremos consultar
+ * @returns Nombre del continente
+ */
 function getSelectedContinent() {
   var continent = document.getElementById("continentFilter").value;
   return continent;
 }
 
-// Add event listener for the submit button
 document.getElementById("submit").addEventListener("click", () => {
   var minMagnitude = parseFloat(document.getElementById("minMagnitude").value);
   var maxMagnitude = parseFloat(document.getElementById("maxMagnitude").value);
@@ -359,13 +370,13 @@ document.getElementById("submit").addEventListener("click", () => {
  */
 function getRadius(magnitude) {
   if (magnitude >= 7.0) {
-    return 300;
+    return (300 * magnitude) / 7.0;
   } else if (magnitude >= 6.0) {
-    return 100;
+    return (100 * magnitude) / 6.0;
   } else if (magnitude >= 5.0) {
-    return 30;
+    return (30 * magnitude) / 5.0;
   } else if (magnitude >= 4.0) {
-    return 10;
+    return (10 * magnitude) / 4.0;
   } else {
     return 5;
   }
