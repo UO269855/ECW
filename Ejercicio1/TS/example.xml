@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<q:quakeml xmlns:q="http://quakeml.org/xmlns/quakeml/1.2">
+    <eventParameters>
+        <event publicID="smi:local/event/1">
+            <description>
+                <text>Example Earthquake</text>
+            </description>
+            <origin publicID="smi:local/origin/1">
+                <time>
+                    <value>2024-09-24T12:34:56.789Z</value>
+                </time>
+                <latitude>
+                    <value>37.7749</value>
+                </latitude>
+                <longitude>
+                    <value>-122.4194</value>
+                </longitude>
+                <depth>
+                    <value>10.0</value>
+                </depth>
+            </origin>
+            <magnitude publicID="smi:local/magnitude/1">
+                <mag>
+                    <value>5.5</value>
+                </mag>
+                <type>MW</type>
+            </magnitude>
+        </event>
+    </eventParameters>
+</q:quakeml>
