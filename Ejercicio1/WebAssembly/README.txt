@@ -1,0 +1,1 @@
+emcc quake_parser.cpp -o quake_parser.js -I./nlohmann -I./tinyxml2 ./tinyxml2/tinyxml2.cpp -s EXPORTED_FUNCTIONS="['_parse_quakeml']" -s EXPORTED_RUNTIME_METHODS="['cwrap']" -O3

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webpage>
+    <page name="index.html" title="Página de Inicio" stylesheet="css/style.css">
+        <!-- Section Block with title -->
+        <textblock type="main" title="Bienvenidos a nuestro sitio web">
+            <!-- Article Block with nested title -->
+            <textblock type="section" title="Sobre nuestra empresa">
+                Este es el artículo que habla sobre la misión y visión de la empresa.
+            </textblock>
+            <textblock type="article" title="Nuestros servicios">
+                Aquí describimos los servicios que ofrecemos a nuestros clientes.
+            </textblock>
+        </textblock>
+        <textblock type="section" title="Últimas Noticias">
+            Este es un artículo sobre nuestro último lanzamiento de producto.
+        </textblock>
+    </page>
+
+    <page name="aboutMe.html" title="Datos sobre mí" stylesheet="css/style.css">
+        <textblock type="section" title="Mi historia">
+            <textblock type="article" title="Mi infancia">
+                Había nacido en una pequeña ciudad donde aprendí muchas lecciones de vida.
+            </textblock>
+        </textblock>
+    </page>
+
+    <page name="help.html" title="Página de Ayuda" stylesheet="css/style.css">
+        <textblock type="section" title="FAQ - Preguntas frecuentes">
+            <textblock type="article" title="¿Cómo contacto con soporte?">
+                Para contactar con soporte, envíenos un correo a soporte@empresa.com.
+            </textblock>
+            <textblock type="article" title="¿Dónde puedo ver mis pedidos?">
+                Puede ver sus pedidos en la sección de "Mis Pedidos" en su cuenta.
+            </textblock>
+        </textblock>
+    </page>
+</webpage>

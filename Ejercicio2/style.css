@@ -1,0 +1,126 @@
+@media only screen and (max-width: 900px) {
+    body {
+        width: 95vw;
+    }
+    img {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 900px) {
+    body {
+        width: 60vw;
+    }
+    img {
+        width: 50%;
+    }
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
+    font: 18px "Monaco", monospace;
+    font-weight: 500;
+    text-align: start;
+    margin: auto;
+}
+
+header, main, footer {
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+}
+
+header {
+    justify-content: center;
+    color: white;
+    background-color: #444F5A;
+    padding-bottom: 1rem;
+    align-items: center;
+}
+
+main {
+    background-color: white;
+}
+
+footer{
+    padding: 1.5rem 0;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+}
+
+img {
+    height: auto;
+    align-self: center;
+}
+
+a {
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+nav a{
+    color: black;
+    background-color: #add8e6;
+    margin: 0.4rem;
+    padding: 0.6rem;
+    text-align: center;
+    text-decoration: none;
+}
+
+nav a:hover, nav a:focus {
+    color: black;
+    background-color: lightsalmon;
+}
+
+h2 {
+    background-color: lightsalmon;
+    font-size: 1.6rem;
+}
+
+h3 {
+    background-color: lightcoral;
+    font-size: 1.4rem;
+}
+
+h4 {
+    background-color: lightgreen;
+    font-size: 1.2rem;
+}
+
+h2, h3, h4 {
+    padding: 0.4rem;
+    font-weight: bold;
+}
+
+header form {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.4rem;
+}
+
+header form label{
+    display: flex;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+header form input {
+    margin-right: 0.2rem;
+}
+
+header form button {
+    font-weight: bold;
+}
