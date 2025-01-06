@@ -1,5 +1,5 @@
 // Inicializamos el mapa
-var map = L.map("map").setView([0, 0], 2);
+var map = L.map("map", { maxZoom: 3 }).setView([0, 0], 2);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -267,11 +267,11 @@ function fetchEarthquakeData(
           var marker = L.marker([roundedLatitude, roundedLongitude]).addTo(map);
           marker.bindPopup(
             `<h3>${epicenter.place}</h3>
-            <ul><li>Magnitude: ${roundedMagnitude}</li>
-            <li>Latitude: ${roundedLatitude}</li>
-            <li>Longitude: ${roundedLongitude}</li>
-            <li>Depth: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
-            <li>Time: ${new Date(epicenter.time).toLocaleString()}</li></ul>`
+            <ul><li>Magnitud: ${roundedMagnitude}</li>
+            <li>Latitud: ${roundedLatitude}</li>
+            <li>Longitud: ${roundedLongitude}</li>
+            <li>Profundidad: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
+            <li>Fecha: ${new Date(epicenter.time).toLocaleString()}</li></ul>`
           );
 
           marker.on("click", function () {

@@ -1,11 +1,18 @@
+const importObject = {
+  env: {
+    memory: new WebAssembly.Memory({ initial: 256, maximum: 256 }),
+  },
+};
+
 // Inicializamos el mapa
-var map = L.map("map").setView([0, 0], 2);
+var map = L.map("map", { maxZoom: 10 }).setView([0, 0], 2);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
 var markers = [];
+var circles = [];
 
 function showLoadingOverlay() {
   document.getElementById("loadingOverlay").style.display = "flex";
@@ -47,134 +54,6 @@ function getContinent(lat, lng) {
   }
 
   return "Desconocido";
-}
-
-/**
- * Función que parsea un fichero quakeML para recuperar su información
- * @param {*} quakeML XML con los datos del terremoto
- * @returns Lista con los epicentros de los terremotos
- */
-function parseQuakeML(quakeML) {
-  var parser = new DOMParser();
-  var xmlDoc = parser.parseFromString(quakeML, "application/xml");
-  var nsResolver = function (prefix) {
-    var ns = { q: "http://quakeml.org/xmlns/bed/1.2" };
-    return ns[prefix] || null;
-  };
-
-  var events = xmlDoc.evaluate(
-    "//q:event",
-    xmlDoc,
-    nsResolver,
-    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-    null
-  );
-  var epicenters = [];
-
-  for (var i = 0; i < events.snapshotLength; i++) {
-    // Recuperamos los datos del terremoto
-
-    var event = events.snapshotItem(i);
-    var origin = xmlDoc.evaluate(
-      ".//q:origin",
-      event,
-      nsResolver,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue;
-    var magnitudeElement = xmlDoc.evaluate(
-      ".//q:magnitude",
-      event,
-      nsResolver,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue;
-    var descriptionElement = xmlDoc.evaluate(
-      ".//q:description",
-      event,
-      nsResolver,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue;
-
-    var depthElement = xmlDoc.evaluate(
-      ".//q:depth/q:value",
-      origin,
-      nsResolver,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue;
-
-    var timeElement = xmlDoc.evaluate(
-      ".//q:time/q:value",
-      origin,
-      nsResolver,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue;
-
-    if (origin && magnitudeElement && descriptionElement) {
-      var latitudeElement = xmlDoc.evaluate(
-        ".//q:latitude/q:value",
-        origin,
-        nsResolver,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue;
-      var longitudeElement = xmlDoc.evaluate(
-        ".//q:longitude/q:value",
-        origin,
-        nsResolver,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue;
-      var magnitudeValueElement = xmlDoc.evaluate(
-        ".//q:mag/q:value",
-        magnitudeElement,
-        nsResolver,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue;
-      var placeElement = xmlDoc.evaluate(
-        ".//q:text",
-        descriptionElement,
-        nsResolver,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue;
-
-      if (
-        latitudeElement &&
-        longitudeElement &&
-        magnitudeValueElement &&
-        placeElement
-      ) {
-        var latitude = parseFloat(latitudeElement.textContent);
-        var longitude = parseFloat(longitudeElement.textContent);
-        var magnitude = parseFloat(magnitudeValueElement.textContent);
-        var place = placeElement.textContent;
-        var depth = depthElement
-          ? parseFloat(depthElement.textContent) / 1000
-          : null;
-        var time = timeElement ? timeElement.textContent : null;
-
-        // Incluimos los datos en el terremoto
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-          epicenters.push({
-            lat: latitude,
-            lng: longitude,
-            magnitude: magnitude,
-            place: place,
-            depth: depth,
-            time: time,
-            radius: getRadius(magnitude),
-            continent: getContinent(latitude, longitude),
-          });
-        }
-      }
-    }
-  }
-  return epicenters;
 }
 
 /**
@@ -229,21 +108,27 @@ function fetchEarthquakeData(
       }
       return response.text();
     })
-    .then((data) => {
-      var epicenters = parseQuakeML(data);
+    .then((quakeMLData) => {
+      const parseQuakeML = Module.cwrap("parse_quakeml", "string", ["string"]);
+      const jsonString = parseQuakeML(quakeMLData);
+
+      var epicenters = JSON.parse(jsonString);
 
       var disableMagnitudeFilter = document.getElementById(
         "disableMagnitudeFilter"
       ).checked;
 
       var filteredEpicenters = epicenters.filter((epicenter) => {
+        var epicenterData = parseEarthquakeData(epicenter);
+
         var magnitudeCondition =
           !disableMagnitudeFilter ||
-          (epicenter.magnitude >= minMagnitude &&
-            epicenter.magnitude <= maxMagnitude);
+          (epicenterData.magnitude >= minMagnitude &&
+            epicenterData.magnitude <= maxMagnitude);
 
         var continentCondition =
-          continentFilter === "All" || epicenter.continent === continentFilter;
+          continentFilter === "All" ||
+          epicenterData.continent === continentFilter;
 
         return magnitudeCondition && continentCondition;
       });
@@ -257,28 +142,30 @@ function fetchEarthquakeData(
         var bounds = L.latLngBounds();
 
         filteredEpicenters.forEach((epicenter) => {
-          var roundedMagnitude = epicenter.magnitude.toFixed(2);
-          var roundedLatitude = epicenter.lat.toFixed(2);
-          var roundedLongitude = epicenter.lng.toFixed(2);
+          var roundedMagnitude = parseFloat(epicenter.magnitude).toFixed(2);
+          var roundedLatitude = parseFloat(epicenter.lat).toFixed(2);
+          var roundedLongitude = parseFloat(epicenter.lng).toFixed(2);
           var roundedDepth = epicenter.depth
-            ? epicenter.depth.toFixed(2)
+            ? parseFloat(epicenter.depth).toFixed(2)
             : null;
+
+          epicenter.radius = getRadius(roundedMagnitude);
 
           var marker = L.marker([roundedLatitude, roundedLongitude]).addTo(map);
           marker.bindPopup(
             `<h3>${epicenter.place}</h3>
-            <ul><li>Magnitude: ${roundedMagnitude}</li>
-            <li>Latitude: ${roundedLatitude}</li>
-            <li>Longitude: ${roundedLongitude}</li>
-            <li>Depth: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
-            <li>Time: ${new Date(epicenter.time).toLocaleString()}</li></ul>`
+            <ul><li>Magnitud: ${roundedMagnitude}</li>
+            <li>Latitud: ${roundedLatitude}</li>
+            <li>Longitud: ${roundedLongitude}</li>
+            <li>Profundidad: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
+            <li>Fecha: ${new Date(epicenter.time).toLocaleString()}</li></ul>`
           );
 
           marker.on("click", function () {
             updateEarthquakeData(epicenter);
           });
 
-          L.circle([epicenter.lat, epicenter.lng], {
+          var circle = L.circle([epicenter.lat, epicenter.lng], {
             radius: epicenter.radius * 1000,
             color: "blue",
             fill: true,
@@ -288,12 +175,14 @@ function fetchEarthquakeData(
           bounds.extend(marker.getLatLng());
 
           markers.push(marker);
+          circles.push(circle);
         });
 
         map.fitBounds(bounds);
       } else {
         document.getElementById("errorMessage").textContent =
           "No se han encontrado terremotos con los filtros seleccionados";
+        clearMarkers();
       }
     })
     .catch((error) => {
@@ -303,6 +192,7 @@ function fetchEarthquakeData(
       );
       document.getElementById("errorMessage").textContent =
         "Error recuperando información sobre los terremotos:";
+      clearMarkers();
     })
     .finally(() => {
       hideLoadingOverlay();
@@ -389,16 +279,18 @@ function getRadius(magnitude) {
 function updateEarthquakeData(epicenter) {
   const earthquakeDataDiv = document.getElementById("earthquakeData");
 
+  epicenter = parseEarthquakeData(epicenter);
+
   var continent = getContinent(epicenter.lat, epicenter.lng);
 
   const dataContent = `
     <h2>Terremoto seleccionado</h2>
     <h3>Localización:</h3> <p>${epicenter.place}</p>
-    <h3>Magnitud:</h3><p>${epicenter.magnitude.toFixed(2)}</p>
-    <h3>Latitud:</h3><p>${epicenter.lat.toFixed(2)}º</p>
-    <h3>Longitud:</h3><p>${epicenter.lng.toFixed(2)}º</p>
+    <h3>Magnitud:</h3><p>${epicenter.magnitude}</p>
+    <h3>Latitud:</h3><p>${epicenter.lat}º</p>
+    <h3>Longitud:</h3><p>${epicenter.lng}º</p>
     <h3>Profundidad:</h3><p>${
-      epicenter.depth ? epicenter.depth.toFixed(2) + " km" : "N/A"
+      epicenter.depth ? epicenter.depth + " km" : "N/A"
     }</p>
     <h3>Fecha:</h3><p>${new Date(epicenter.time).toLocaleString()}</p>
     <h3>Radio:</h3><p>${epicenter.radius} km</p>
@@ -416,4 +308,66 @@ function clearMarkers() {
     map.removeLayer(marker);
   });
   markers = [];
+
+  circles.forEach(function (circle) {
+    map.removeLayer(circle);
+  });
+  circles = [];
+}
+
+/**
+ * Función que limpia la lista de marcadores de los epicentros y los elimina del mapa
+ */
+function load(quakeMLData) {
+  const quakeMLPointer = Module._malloc(quakeMLData.length + 1);
+  Module.stringToUTF8(quakeMLData, quakeMLPointer, quakeMLData.length + 1);
+
+  // Call the C++ function to parse the QuakeML data and get the JSON string
+  const jsonPointer = Module._parseQuakeML(quakeMLPointer);
+
+  // Read the JSON string from the returned pointer
+  const jsonString = Module.UTF8ToString(jsonPointer);
+
+  // Parse the JSON string into a JavaScript object
+  epicenters = JSON.parse(jsonString);
+}
+
+/**
+ * Función que estima el radio del terremoto en base a su magnitud
+ * @param {*} magnitude Magnitud del terremoto
+ * @returns Radio en kilómetros del terremoto
+ */
+function getRadius(magnitude) {
+  if (magnitude >= 7.0) {
+    return (300 * magnitude) / 7.0;
+  } else if (magnitude >= 6.0) {
+    return (100 * magnitude) / 6.0;
+  } else if (magnitude >= 5.0) {
+    return (30 * magnitude) / 5.0;
+  } else if (magnitude >= 4.0) {
+    return (10 * magnitude) / 4.0;
+  } else {
+    return 5;
+  }
+}
+
+/**
+ * Función que convierte los tipos del terremoto al correspondiente
+ * @param {*} earthquake Terremoto que queremos parsear
+ * @returns earthquakeData
+ */
+function parseEarthquakeData(earthquake) {
+  var earthquakeData = earthquake;
+  earthquakeData.magnitude = parseFloat(earthquake.magnitude).toFixed(2);
+  earthquakeData.lat = parseFloat(earthquake.lat).toFixed(2);
+  earthquakeData.lng = parseFloat(earthquake.lng).toFixed(2);
+  earthquakeData.depth = earthquake.depth
+    ? parseFloat(earthquake.depth).toFixed(2)
+    : null;
+  earthquakeData.radius = getRadius(earthquake.magnitude);
+  earthquakeData.continent = getContinent(
+    earthquakeData.lat,
+    earthquakeData.lng
+  );
+  return earthquakeData;
 }

@@ -278,11 +278,11 @@ function fetchEarthquakeData(
 
           marker.bindPopup(
             `<h3>${epicenter.place}</h3>
-            <ul><li>Magnitude: ${roundedMagnitude}</li>
-            <li>Latitude: ${roundedLatitude}</li>
-            <li>Longitude: ${roundedLongitude}</li>
-            <li>Depth: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
-            <li>Time: ${new Date(epicenter.time!).toLocaleString()}</li></ul>`
+            <ul><li>Magnitud: ${roundedMagnitude}</li>
+            <li>Latitud: ${roundedLatitude}</li>
+            <li>Longitud: ${roundedLongitude}</li>
+            <li>Profundidad: ${roundedDepth ? roundedDepth + " km" : "N/A"}</li>
+            <li>Fecha: ${new Date(epicenter.time!).toLocaleString()}</li></ul>`
           );
 
           marker.on("click", function () {

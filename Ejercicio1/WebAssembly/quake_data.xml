@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:anss="http://anss.org/xmlns/event/0.1"
+    xmlns:catalog="http://anss.org/xmlns/catalog/0.1" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2">
+    <eventParameters
+        publicID="quakeml:earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.quakeml">
+        <event catalog:datasource="nc" catalog:eventsource="nc" catalog:eventid="75113301"
+            publicID="quakeml:earthquake.usgs.gov/earthquakes/feed/v1.0/detail/nc75113301.quakeml">
+            <description>
+                <type>earthquake name</type>
+                <text>9 km E of Milpitas, CA</text>
+            </description>
+            <origin catalog:datasource="nc" catalog:dataid="nc75113301" catalog:eventsource="nc"
+                catalog:eventid="75113301"
+                publicID="quakeml:earthquake.usgs.gov/realtime/product/origin/nc75113301/nc/1736117564410/product.xml">
+                <time>
+                    <value>2025-01-05T22:51:10.870Z</value>
+                </time>
+                <longitude>
+                    <value>-121.80982971191</value>
+                </longitude>
+                <latitude>
+                    <value>37.448665618896</value>
+                </latitude>
+                <depth>
+                    <value>6269.9999809265</value>
+                    <uncertainty>449.999988</uncertainty>
+                </depth>
+                <originUncertainty>
+                    <horizontalUncertainty>160</horizontalUncertainty>
+                    <preferredDescription>horizontal uncertainty</preferredDescription>
+                </originUncertainty>
+                <quality>
+                    <usedPhaseCount>38</usedPhaseCount>
+                    <usedStationCount>40</usedStationCount>
+                    <standardError>0.06</standardError>
+                    <azimuthalGap>44</azimuthalGap>
+                    <minimumDistance>0.01931</minimumDistance>
+                </quality>
+                <evaluationMode>automatic</evaluationMode>
+                <creationInfo>
+                    <agencyID>NC</agencyID>
+                    <creationTime>2025-01-05T22:52:44.410Z</creationTime>
+                    <version>0</version>
+                </creationInfo>
+            </origin>
+            <magnitude catalog:datasource="nc" catalog:dataid="nc75113301" catalog:eventsource="nc"
+                catalog:eventid="75113301"
+                publicID="quakeml:earthquake.usgs.gov/realtime/product/origin/nc75113301/nc/1736117564410/product.xml#magnitude">
+                <mag>
+                    <value>2.12</value>
+                    <uncertainty>0.17</uncertainty>
+                </mag>
+                <type>md</type>
+                <stationCount>41</stationCount>
+                <originID>
+                    quakeml:earthquake.usgs.gov/realtime/product/origin/nc75113301/nc/1736117564410/product.xml</originID>
+                <evaluationMode>automatic</evaluationMode>
+                <creationInfo>
+                    <agencyID>NC</agencyID>
+                    <creationTime>2025-01-05T22:52:44.410Z</creationTime>
+                </creationInfo>
+            </magnitude>
+            <preferredOriginID>
+                quakeml:earthquake.usgs.gov/realtime/product/origin/nc75113301/nc/1736117564410/product.xml</preferredOriginID>
+            <preferredMagnitudeID>
+                quakeml:earthquake.usgs.gov/realtime/product/origin/nc75113301/nc/1736117564410/product.xml#magnitude</preferredMagnitudeID>
+            <type>earthquake</type>
+            <creationInfo>
+                <agencyID>nc</agencyID>
+                <creationTime>2025-01-05T22:57:17.614Z</creationTime>
+                <version>0</version>
+            </creationInfo>
+        </event>
+        <creationInfo>
+            <creationTime>2025-01-05T22:58:57.000Z</creationTime>
+        </creationInfo>
+    </eventParameters>
+</q:quakeml>
