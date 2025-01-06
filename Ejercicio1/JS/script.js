@@ -1,11 +1,12 @@
 // Inicializamos el mapa
-var map = L.map("map", { maxZoom: 3 }).setView([0, 0], 2);
+var map = L.map("map", { maxZoom: 10 }).setView([0, 0], 2);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
 var markers = [];
+var circles = [];
 
 function showLoadingOverlay() {
   document.getElementById("loadingOverlay").style.display = "flex";
@@ -217,7 +218,7 @@ function fetchEarthquakeData(
   continentFilter
 ) {
   let url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_${timeRange}.quakeml`;
-
+  clearMarkers();
   showLoadingOverlay();
 
   fetch(url)
@@ -278,7 +279,7 @@ function fetchEarthquakeData(
             updateEarthquakeData(epicenter);
           });
 
-          L.circle([epicenter.lat, epicenter.lng], {
+          var circle = L.circle([epicenter.lat, epicenter.lng], {
             radius: epicenter.radius * 1000,
             color: "blue",
             fill: true,
@@ -288,6 +289,7 @@ function fetchEarthquakeData(
           bounds.extend(marker.getLatLng());
 
           markers.push(marker);
+          circles.push(circle);
         });
 
         map.fitBounds(bounds);
@@ -416,4 +418,9 @@ function clearMarkers() {
     map.removeLayer(marker);
   });
   markers = [];
+
+  circles.forEach(function (circle) {
+    map.removeLayer(circle);
+  });
+  circles = [];
 }

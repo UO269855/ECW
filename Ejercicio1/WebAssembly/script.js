@@ -84,19 +84,13 @@ toggleMagnitudeInputs();
 /**
  * Función que se encarga de recuperar la información de los terremotos en base a los filtros aplicados.
  * Toda la información procede de https://earthquake.usgs.gov/earthquakes/feed/v1.0/quakeml.php
- * @param {*} timeRange Espacio de tiempo en el cual queremos consultar la actividad sísmica
  * @param {*} minMagnitude Magnitud mínima de los terremotos que queramos consultar
  * @param {*} maxMagnitude Magnitud máxima de los terremotos que queramos consultar
  * @param {*} continentFilter Filtro con el continente en el que queramos consultar la actividad sísmica
  */
-function fetchEarthquakeData(
-  timeRange,
-  minMagnitude,
-  maxMagnitude,
-  continentFilter
-) {
-  let url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_${timeRange}.quakeml`;
-
+function fetchEarthquakeData(minMagnitude, maxMagnitude, continentFilter) {
+  let url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.quakeml`;
+  clearMarkers();
   showLoadingOverlay();
 
   fetch(url)
@@ -200,20 +194,6 @@ function fetchEarthquakeData(
 }
 
 /**
- * Función que recupera el rango de tiempo que queremos consultar
- * @returns Rango a consultar con la nomenclatura de https://earthquake.usgs.gov/earthquakes/feed/v1.0/quakeml.php
- */
-function getSelectedTimeRange() {
-  var timeRange;
-  document.querySelectorAll('input[name="timeRange"]').forEach((radio) => {
-    if (radio.checked) {
-      timeRange = radio.value;
-    }
-  });
-  return timeRange;
-}
-
-/**
  * Función que recupera el continente que queremos consultar
  * @returns Nombre del continente
  */
@@ -225,31 +205,20 @@ function getSelectedContinent() {
 document.getElementById("submit").addEventListener("click", () => {
   var minMagnitude = parseFloat(document.getElementById("minMagnitude").value);
   var maxMagnitude = parseFloat(document.getElementById("maxMagnitude").value);
-  var timeRange = getSelectedTimeRange();
   var continentFilter = getSelectedContinent();
 
   var disableMagnitudeFilter = document.getElementById(
     "disableMagnitudeFilter"
   ).checked;
 
-  if (timeRange) {
-    if (
-      minMagnitude <= maxMagnitude ||
-      (disableMagnitudeFilter && minMagnitude > maxMagnitude)
-    ) {
-      fetchEarthquakeData(
-        timeRange,
-        minMagnitude,
-        maxMagnitude,
-        continentFilter
-      );
-    } else {
-      document.getElementById("errorMessage").textContent =
-        "La magnitud mínima debe ser menor o igual que la magnitud máxima";
-    }
+  if (
+    minMagnitude <= maxMagnitude ||
+    (disableMagnitudeFilter && minMagnitude > maxMagnitude)
+  ) {
+    fetchEarthquakeData(minMagnitude, maxMagnitude, continentFilter);
   } else {
     document.getElementById("errorMessage").textContent =
-      "Por favor, seleccione un rango de tiempo";
+      "La magnitud mínima debe ser menor o igual que la magnitud máxima";
   }
 });
 
@@ -313,23 +282,6 @@ function clearMarkers() {
     map.removeLayer(circle);
   });
   circles = [];
-}
-
-/**
- * Función que limpia la lista de marcadores de los epicentros y los elimina del mapa
- */
-function load(quakeMLData) {
-  const quakeMLPointer = Module._malloc(quakeMLData.length + 1);
-  Module.stringToUTF8(quakeMLData, quakeMLPointer, quakeMLData.length + 1);
-
-  // Call the C++ function to parse the QuakeML data and get the JSON string
-  const jsonPointer = Module._parseQuakeML(quakeMLPointer);
-
-  // Read the JSON string from the returned pointer
-  const jsonString = Module.UTF8ToString(jsonPointer);
-
-  // Parse the JSON string into a JavaScript object
-  epicenters = JSON.parse(jsonString);
 }
 
 /**
