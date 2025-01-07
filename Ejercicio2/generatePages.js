@@ -56,26 +56,28 @@ function generateHTML(xmlNode) {
               <h1>${title}</h1>`;
 
   // Add navigation bar with links to all pages
-  html += `<nav><ul>`;
+  html += `<nav>`;
 
   // Get all pages and generate links to them
   const pages = xmlNode.parentNode.getElementsByTagName("page");
   Array.from(pages).forEach((page) => {
     const pageName = page.getAttribute("name");
     if (pageName) {
-      html += `<li><a href="${pageName}">${page.getAttribute(
-        "title"
-      )}</a></li>`;
+      html += `<a href="${pageName}">${page.getAttribute("title")}</a>`;
     }
   });
 
-  html += `</ul></nav>`;
+  html += `</nav>`;
 
-  // Start the body content generation
+  // Recursively process child nodes (nested textblocks)
   const children = xmlNode.childNodes;
   if (children.length > 0) {
     Array.from(children).forEach((child) => {
-      html += generateBody(child, 2); // Increase level for deeper nesting
+      if (child.tagName === "imageblock") {
+        html += generateImage(child); // Increase level for deeper nesting
+      } else {
+        html += generateText(child, 1); // Increase level for deeper nesting
+      }
     });
   }
 
@@ -84,7 +86,7 @@ function generateHTML(xmlNode) {
 }
 
 // Recursive function to generate body content based on XML structure
-function generateBody(xmlNode, level = 1) {
+function generateText(xmlNode, level) {
   let html = "";
 
   // If it's an element node (not text or comment)
@@ -102,7 +104,11 @@ function generateBody(xmlNode, level = 1) {
     const children = xmlNode.childNodes;
     if (children.length > 0) {
       Array.from(children).forEach((child) => {
-        html += generateBody(child, level + 1); // Increase level for deeper nesting
+        if (child.tagName === "imageblock") {
+          html += generateImage(child); // Increase level for deeper nesting
+        } else {
+          html += generateText(child, level + 1); // Increase level for deeper nesting
+        }
       });
     }
 
@@ -116,6 +122,22 @@ function generateBody(xmlNode, level = 1) {
       // Only create <p> if content is not empty
       html += `<p>${content}</p>`;
     }
+  }
+
+  return html;
+}
+
+// Recursive function to generate body content based on XML structure
+function generateImage(xmlNode) {
+  let html = "";
+
+  // If it's an element node (not text or comment)
+  if (xmlNode.nodeType === 1) {
+    const src = xmlNode.getAttribute("src");
+    const alt = xmlNode.getAttribute("alt");
+
+    // Open the tag based on 'type' (could be section, article, etc.)
+    html += `<img src="${src}" alt="${alt}">`;
   }
 
   return html;
